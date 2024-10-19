@@ -8,6 +8,6 @@ if os.path.exists('boundaries.py'):
     else:
         os.remove('boundaries.py')
 
-Path('boundaries.py').symlink_to('../apps/boundaries/main.py')
+Path('boundaries.py').symlink_to('../boundaries/main.py')
 
-os.chmod("bpb.py", 744)
+os.system("chmod u+x bpb.py")
