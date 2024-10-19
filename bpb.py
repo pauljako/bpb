@@ -6,16 +6,32 @@ import sys
 
 def fail(reason: str):
     print("\033[91m"+ "A critical error occoured:" + "\033[0m")
-    print(reason)
+    print("=> " + reason)
     sys.exit(1)
 
 
 def build(path: str, output: str, should_install: bool, should_compress: bool):
     file_path = os.path.realpath(os.path.join(os.getcwd(), path))
+    
     if not os.path.exists(file_path):
         fail(f"Path not existing: {file_path}")
     if not os.path.isdir(file_path):
         fail(f"Not a directory: {file_path}")
+    if (not os.path.exists(os.path.join(file_path, "bpb.json"))) or (not os.path.isfile(os.path.join(file_path, "bpb.json"))):
+        fail("Could not find the bpb.json file")
+        
+    os.chdir(file_path)
+    
+    with open(os.path.join(file_path, "bpb.json"), "rb") as f:
+        information = json.load(f)
+        
+    if not "name" in information:
+        fail("The bpb.json file does not contain the 'name' field")
+    if not "version" in information:
+        fail("The bpb.json file does not contain the 'version' field")
+    if not "build" in information:
+        fail("The bpb.json file does not contain the 'build' field")
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="bpb", description="The boundaries package builder")
