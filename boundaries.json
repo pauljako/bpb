@@ -2,7 +2,7 @@
     "name": "bpb",
     "version": "0.1",
     "command": {
-        "install": "chmod +x ./bpb.py",
+        "install": "python3 install.py",
         "run": "./bpb.py"
     },
     "bin": "bpb"
