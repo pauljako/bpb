@@ -4,6 +4,7 @@ import os
 import json
 import sys
 import shutil
+import tarfile
 from urllib.request import urlretrieve
 
 def fail(reason: str):
@@ -80,10 +81,18 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
         json.dump(json_file, f)
         
     os.chdir(file_path)
-    if output:
+    if output and not should_compress:
         if os.path.exists(os.path.join(file_path, output)):
             shutil.rmtree(os.path.join(file_path, output))
         shutil.move(os.path.join(file_path, "package"), os.path.join(file_path, output))
+    elif output and should_compress:
+        with tarfile.open(output, "w:gz") as tar:
+            tar.add("package")
+        shutil.rmtree("package")
+    elif should_compress:
+        with tarfile.open("package.tar.gz", "w:gz") as tar:
+            tar.add("package")
+        shutil.rmtree("package")
         
     print("Done! Package built")
 
