@@ -1,5 +1,6 @@
 {
     "name": "bpb",
+    "version": "0.1",
     "command": {
         "install": "chmod +x ./bpb.py",
         "run": "./bpb.py"
