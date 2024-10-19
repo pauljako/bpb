@@ -48,7 +48,9 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
         fail("The bpb.json file does not contain the 'json_file' field")
         
     if "web_sources" in information and isinstance(information["web_sources"], dict) and len(information["web_sources"]) > 0:
-        for url, path in information["web_sources"].items():
+        for org_url, org_path in information["web_sources"].items():
+            url = org_url.replace("$PKG_VERSION", information["version"])
+            path = org_path.replace("$PKG_VERSION", information["version"])
             print(f"Downloading source {path} from {url}")
             urlretrieve(url, path, report_hook)
             print("")
@@ -56,7 +58,9 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
                 fail(f"Download of {path} failed")
                 
     if "git_sources" in information and isinstance(information["git_sources"], dict) and len(information["git_sources"]) > 0:
-        for url, path in information["git_sources"].items():
+        for org_url, org_path in information["git_sources"].items():
+            url = org_url.replace("$PKG_VERSION", information["version"])
+            path = org_path.replace("$PKG_VERSION", information["version"])
             print(f"Cloning {path} from {url}")
             os.system(f"git clone {url} {path}")
             if not os.path.exists(path):
@@ -86,10 +90,12 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
             shutil.rmtree(os.path.join(file_path, output))
         shutil.move(os.path.join(file_path, "package"), os.path.join(file_path, output))
     elif output and should_compress:
+        print("Compressing package")
         with tarfile.open(output, "w:gz") as tar:
             tar.add("package")
         shutil.rmtree("package")
     elif should_compress:
+        print("Compressing package")
         with tarfile.open("package.tar.gz", "w:gz") as tar:
             tar.add("package")
         shutil.rmtree("package")
