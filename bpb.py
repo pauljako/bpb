@@ -5,6 +5,7 @@ import json
 import sys
 import shutil
 import tarfile
+import boundaries
 from urllib.request import urlretrieve
 
 def fail(reason: str):
@@ -46,6 +47,16 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
         fail("The bpb.json file does not contain the 'build' field")
     if not "json_file" in information:
         fail("The bpb.json file does not contain the 'json_file' field")
+        
+    if "dependencies" in information:
+        if "build_packages" in information["dependencies"]:
+            for package in information["dependencies"]["build_packages"]:
+                if not package in boundaries.get_packages():
+                    fail(f"The boundaries package {package} could not be found and is a build dependency")
+        if "build_commands" in information["dependencies"]:
+            for command in information["dependencies"]["build_commands"]:
+                if shutil.which(command) is None:
+                    fail(f"The command {command} could not be found and is a build dependency")
         
     if "web_sources" in information and isinstance(information["web_sources"], dict) and len(information["web_sources"]) > 0:
         for org_url, org_path in information["web_sources"].items():
