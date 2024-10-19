@@ -1,0 +1,8 @@
+{
+    "name": "bpb",
+    "command": {
+        "install": "chmod +x ./bpb.py",
+        "run": "./bpb.py"
+    },
+    "bin": "bpb"
+}
