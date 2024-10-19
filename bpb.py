@@ -20,7 +20,7 @@ def report_hook(block_count, block_size, file_size):
     size = round(file_size / 1000000, 1)
     if downloaded > size:
         downloaded = size
-        print(f"{downloaded}MB/{size}MB ({percentage}%)", end="     \r")
+        print(f"=> {downloaded}MB/{size}MB ({percentage}%)", end="     \r")
 
 def build(path: str, output: str | None, should_install: bool, should_compress: bool):
     file_path = os.path.realpath(os.path.join(os.getcwd(), path))
@@ -50,6 +50,7 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
         for url, path in information["web_sources"].items():
             print(f"Downloading source {path} from {url}")
             urlretrieve(url, path, report_hook)
+            print("")
             if not os.path.exists(path):
                 fail(f"Download of {path} failed")
                 
@@ -65,7 +66,7 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
     os.mkdir(os.path.join(file_path, "package"))
                 
     print(f"Building {information['name']}")
-    build_result = os.system(information["build"])
+    build_result = os.system(f"PKG_NAME={information["name"]} PKG_VERSION={information["version"]} {information["build"]}")
     if build_result != 0:
         fail("Build failed")
         
