@@ -22,7 +22,7 @@ def report_hook(block_count, block_size, file_size):
     size = round(file_size / 1000000, 1)
     if downloaded > size:
         downloaded = size
-        print(f"=> {downloaded}MB/{size}MB ({percentage}%)", end="     \r")
+    print(f"=> {downloaded}MB/{size}MB ({percentage}%)", end="     \r")
 
 def build(path: str, output: str | None, should_install: bool, should_compress: bool):
     file_path = os.path.realpath(os.path.join(os.getcwd(), path))
@@ -96,6 +96,11 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
         json.dump(json_file, f)
         
     os.chdir(file_path)
+    
+    if should_install:
+        print("Installing package")
+        boundaries.install("package")
+    
     if output and not should_compress:
         if os.path.exists(os.path.join(file_path, output)):
             shutil.rmtree(os.path.join(file_path, output))
@@ -111,7 +116,7 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
             tar.add("package")
         shutil.rmtree("package")
         
-    print("Done! Package built")
+    print("\033[92m" + "Done! Package built" + "\033[0m")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="bpb", description="The boundaries package builder")
