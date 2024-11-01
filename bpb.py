@@ -82,7 +82,7 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
     os.mkdir(os.path.join(file_path, "package"))
                 
     print(f"Building {information['name']}")
-    build_result = os.system(f"PKG_NAME={information["name"]} PKG_VERSION={information["version"]} {information["build"]}")
+    build_result = os.system(f"PKG_NAME={information['name']} PKG_VERSION={information['version']} {information['build']}")
     if build_result != 0:
         fail("Build failed")
         
