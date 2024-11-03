@@ -14,6 +14,8 @@ def fail(reason: str):
     sys.exit(1)
 
 def report_hook(block_count, block_size, file_size):
+    if file_size == -1:
+        return
     downloaded = block_count * block_size
     percentage = round(downloaded / file_size * 100)
     if percentage > 100:
@@ -22,7 +24,7 @@ def report_hook(block_count, block_size, file_size):
     size = round(file_size / 1000000, 1)
     if downloaded > size:
         downloaded = size
-    print(f"=> {downloaded}MB/{size}MB ({percentage}%)", end="     \r")
+    print(f"=> {downloaded}MB/{size}MB ({percentage}%)", end="\r")
 
 def build(path: str, output: str | None, should_install: bool, should_compress: bool):
     file_path = os.path.realpath(os.path.join(os.getcwd(), path))
