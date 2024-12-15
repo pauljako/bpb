@@ -18,6 +18,8 @@ def fail(reason: str):
 
 def report_hook(block_count, block_size, file_size):
     global progress_bar
+    if file_size == -1:
+        return
     downloaded = block_count * block_size
     percentage = round(downloaded / file_size * 100)
     if percentage > 100:
