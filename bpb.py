@@ -32,6 +32,7 @@ def report_hook(block_count, block_size, file_size):
         downloaded = size
     progress_bar.update(percentage)
     progress_bar.desc = f"{downloaded}MB/{size}MB"
+    print(f"=> {downloaded}MB/{size}MB ({percentage}%)", end="\r")
 
 def build(path: str, output: str | None, should_install: bool, should_compress: bool):
     global progress_bar
@@ -93,7 +94,7 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
     os.mkdir(os.path.join(file_path, "package"))
 
     print(f"Building {information['name']}")
-    build_result = os.system(f"PKG_NAME={information["name"]} PKG_VERSION={information["version"]} {information["build"]}")
+    build_result = os.system(f"PKG_NAME={information['name']} PKG_VERSION={information['version']} {information['build']}")
     if build_result != 0:
         fail("Build failed")
 
@@ -137,5 +138,9 @@ if __name__ == "__main__":
     parser.add_argument("path", help="The path to the archive or folder to build")
 
     args = parser.parse_args()
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> 79ee5f03919725f14a444fa82b8e1f1b0a4ca5c5
     build(path=args.path, output=args.output, should_install=args.install, should_compress=args.archive)
