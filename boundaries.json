@@ -1,9 +1,9 @@
 {
-    "name": "bpb",
-    "version": "0.1",
-    "command": {
-        "install": "python3 install.py",
-        "run": "./bpb.py"
-    },
-    "bin": "bpb"
+  "name": "bpb",
+  "version": "1.1",
+  "command": {
+    "install": "python3 install.py",
+    "run": "./bpb.py"
+  },
+  "bin": "bpb"
 }
