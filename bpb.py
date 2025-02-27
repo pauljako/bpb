@@ -33,7 +33,7 @@ def report_hook(block_count, block_size, file_size):
     progress_bar.update(percentage)
     progress_bar.desc = f"{downloaded}MB/{size}MB"
 
-def build(path: str, output: str | None, should_install: bool, should_compress: bool):
+def build(path: str, output: str | None, should_install: bool, should_compress: bool, compile_static: bool):
     global progress_bar
     file_path = os.path.realpath(os.path.join(os.getcwd(), path))
 
@@ -57,6 +57,9 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
         fail("The bpb.json file does not contain the 'build' field")
     if not "json_file" in information:
         fail("The bpb.json file does not contain the 'json_file' field")
+
+    if compile_static and "build_static" not in information:
+        fail("The package does not support static builds")
 
     if "dependencies" in information:
         if "build_packages" in information["dependencies"]:
@@ -93,7 +96,11 @@ def build(path: str, output: str | None, should_install: bool, should_compress: 
     os.mkdir(os.path.join(file_path, "package"))
 
     print(f"Building {information['name']}")
-    build_result = os.system(f"PKG_NAME={information['name']} PKG_VERSION={information['version']} {information['build']}")
+    if compile_static:
+        build_command = information['build_static']
+    else:
+        build_command = information['build']
+    build_result = os.system(f"PKG_NAME={information['name']} PKG_VERSION={information['version']} {build_command}")
     if build_result != 0:
         fail("Build failed")
 
@@ -134,8 +141,9 @@ if __name__ == "__main__":
     parser.add_argument("--install", "-i", help="Install the package directly", action="store_true")
     parser.add_argument("--output", "-o", help="The path of the folder/archive to be created", default=None)
     parser.add_argument("--archive", "-a", help="Compress the output into a .tar.gz archive", action="store_true")
+    parser.add_argument("--static", "-s", help="Try to build the package statically", action="store_true")
     parser.add_argument("path", help="The path to the archive or folder to build")
 
     args = parser.parse_args()
 
-    build(path=args.path, output=args.output, should_install=args.install, should_compress=args.archive)
+    build(path=args.path, output=args.output, should_install=args.install, should_compress=args.archive, compile_static=args.static)
